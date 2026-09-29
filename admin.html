@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recharge Hub Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{background:#0b0f1a;color:#fff;padding:18px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.logo{width:50px;height:50px;border-radius:50%;background:#0a84ff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.card{background:#151c2e;border:1px solid #274a86;border-radius:18px;padding:15px}
+.big{font-size:26px;font-weight:700}
+input,select{width:100%;padding:13px;border:none;border-radius:12px;background:#1a2644;color:#fff;margin-top:10px}
+.order{background:#151c2e;border:1px solid #274a86;border-radius:18px;padding:16px;margin-top:15px}
+button{padding:10px 16px;border:none;border-radius:10px;color:#fff;font-weight:600}
+.ok{background:#00b16a}
+.no{background:#ff4d4d}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div style="display:flex;gap:12px;align-items:center">
+<div class="logo">R</div>
+<div>
+<h2>Recharge Admin</h2>
+<p style="opacity:.7;font-size:13px">Manage Recharge Requests</p>
+</div>
+</div>
+</div>
+
+<div class="stats">
+<div class="card"><div>Total</div><div class="big" id="total">0</div></div>
+<div class="card"><div>Pending</div><div class="big" id="pending">0</div></div>
+<div class="card"><div>Approved</div><div class="big" id="approved">0</div></div>
+<div class="card"><div>Rejected</div><div class="big" id="rejected">0</div></div>
+</div>
+
+<input id="search" placeholder="Search Mobile Number">
+<select id="filter">
+<option value="all">All Orders</option>
+<option value="Pending">Pending</option>
+<option value="Approved">Approved</option>
+<option value="Rejected">Rejected</option>
+</select>
+
+<div id="orders"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>
